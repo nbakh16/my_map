@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:get/get.dart';
 
 void main(){
   runApp(MyApp());
@@ -70,6 +71,7 @@ class _HomeState extends State<Home> {
   MapType _currentMapType = MapType.normal;
 
   static const pickerWidth = 40.0;
+  final isMapDragging = false.obs;
 
   void _changeMapType() {
     setState(() {
@@ -116,8 +118,8 @@ class _HomeState extends State<Home> {
                 },
 
                 //when map is dragging
-                onCameraMove: (CameraPosition cameraPositiona) {
-                  cameraPosition = cameraPositiona;
+                onCameraMove: (CameraPosition camPosition) {
+                  cameraPosition = camPosition;
                 },
 
                 //when map drag stops
@@ -169,21 +171,25 @@ class _HomeState extends State<Home> {
               ),
 
               Positioned(
-                  bottom:100,
-                  child: Padding(
-                    padding: EdgeInsets.all(15),
-                    child: Card(
-                      child: Container(
-                          padding: EdgeInsets.all(0),
-                          width: MediaQuery.of(context).size.width - 40,
-                          child: ListTile(
-                            leading: Image.asset("assets/images/map_marker.png", width: pickerWidth/1.5,),
-                            title:Text(location, style: TextStyle(fontSize: 18),),
-                            dense: true,
-                          )
-                      ),
+                bottom:100,
+                child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Card(
+                    child: Container(
+                      padding: EdgeInsets.all(0),
+                      width: MediaQuery.of(context).size.width - 40,
+                      child: Obx(()=>
+                        ListTile(
+                          leading: isMapDragging.value
+                              ? CircularProgressIndicator()
+                              : Image.asset("assets/images/map_marker.png", width: pickerWidth/1.5,),
+                          title:Text(location, style: TextStyle(fontSize: 18),),
+                          dense: true,
+                        )
+                      )
                     ),
-                  )
+                  ),
+                )
               )
             ]
         )
