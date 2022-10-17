@@ -63,14 +63,15 @@ class _HomeState extends State<Home> {
   }
 
 
+
   GoogleMapController? googleMapController;
   CameraPosition? cameraPosition;
-  LatLng startLocation = LatLng(23.7806809, 90.407685);
-  String location = "Select loaction...";
+  LatLng startLocation = const LatLng(23.7806809, 90.407685);
+  String location = "Select location...";
 
   MapType _currentMapType = MapType.normal;
 
-  static const pickerWidth = 40.0;
+  static const markerWidth = 50.0;
   final isMapDragging = false.obs;
 
   void _changeMapType() {
@@ -98,7 +99,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return  Scaffold(
         appBar: AppBar(
-          title: Text("gMAP"),
+          title: const Text("gMAP"),
           centerTitle: true,
         ),
         body: Stack(
@@ -120,10 +121,13 @@ class _HomeState extends State<Home> {
                 //when map is dragging
                 onCameraMove: (CameraPosition camPosition) {
                   cameraPosition = camPosition;
+                  isMapDragging.value = true;
                 },
 
                 //when map drag stops
                 onCameraIdle: () async {
+                  isMapDragging.value = false;
+
                   List<Placemark> placemarks = await placemarkFromCoordinates(cameraPosition!.target.latitude, cameraPosition!.target.longitude);
                   Placemark place = placemarks[0];
                   setState(() { //get place name from lat and lang
@@ -134,23 +138,31 @@ class _HomeState extends State<Home> {
               ),
 
               //map marker here
-              Stack(
-                children: [
-                  Center(
-                    child: Transform.translate(
-                        offset: const Offset(0, -(pickerWidth/2)),
-                        child: Image.asset("assets/images/map_marker.png", width: pickerWidth,)
+              Container(
+                alignment: Alignment.center,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Obx(()=>
+                      Image.asset("assets/images/dot_shadow.png",
+                          width: isMapDragging.value
+                              ? markerWidth/10 : markerWidth/6),
                     ),
-                  ),
-                  Center(
-                      child: Image.asset("assets/images/dot_shadow.png", width: pickerWidth/5,)
-                  ),
-                ]
+                    Obx(()=>
+                      Transform.translate(
+                          offset: isMapDragging.value
+                              ? const Offset(0, -(markerWidth/1.5))
+                              : const Offset(0, -(markerWidth/2)),
+                          child: Image.asset("assets/images/map_marker.png", width: markerWidth,)
+                        ),
+                    )
+                  ]
+                ),
               ),
 
               const SizedBox(height: 20,),
               Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 alignment: Alignment.topRight,
                 child: Column(
                   children: <Widget>[
@@ -180,17 +192,17 @@ class _HomeState extends State<Home> {
               Positioned(
                 bottom:100,
                 child: Padding(
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                   child: Card(
                     child: Container(
-                      padding: EdgeInsets.all(0),
+                      padding: const EdgeInsets.all(0),
                       width: MediaQuery.of(context).size.width - 40,
                       child: Obx(()=>
                         ListTile(
                           leading: isMapDragging.value
-                              ? CircularProgressIndicator()
-                              : Image.asset("assets/images/map_marker.png", width: pickerWidth/1.5,),
-                          title:Text(location, style: TextStyle(fontSize: 18),),
+                              ? Image.asset("assets/images/map_marker.png", width: markerWidth/3,)
+                              : Image.asset("assets/images/map_marker.png", width: markerWidth/1.5,),
+                          title:Text(location, style: const TextStyle(fontSize: 18),),
                           dense: true,
                         )
                       )
