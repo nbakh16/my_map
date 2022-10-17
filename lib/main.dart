@@ -134,11 +134,18 @@ class _HomeState extends State<Home> {
               ),
 
               //map marker here
-              Center(
-                child: Transform.translate(
-                  offset: const Offset(0, -(pickerWidth/2)),
-                  child: Image.asset("assets/images/map_marker.png", width: pickerWidth,)
-                ),
+              Stack(
+                children: [
+                  Center(
+                    child: Transform.translate(
+                        offset: const Offset(0, -(pickerWidth/2)),
+                        child: Image.asset("assets/images/map_marker.png", width: pickerWidth,)
+                    ),
+                  ),
+                  Center(
+                      child: Image.asset("assets/images/dot_shadow.png", width: pickerWidth/5,)
+                  ),
+                ]
               ),
 
               const SizedBox(height: 20,),
