@@ -3,8 +3,17 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 
 void main(){
+  //lock orientation to portrait
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]).then((value)=>runApp(MyApp()));
+
+  //runapp
   runApp(MyApp());
 }
 
@@ -65,7 +74,7 @@ class _HomeState extends State<Home> {
 
   GoogleMapController? googleMapController;
   CameraPosition? cameraPosition;
-  LatLng startLocation = LatLng(23.7806809, 90.407685);
+  LatLng startLocation = const LatLng(23.7806809, 90.407685);
   String location = "Select loaction...";
 
   MapType _currentMapType = MapType.normal;
@@ -98,7 +107,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return  Scaffold(
         appBar: AppBar(
-          title: Text("gMAP"),
+          title: const Text("gMAP"),
           centerTitle: true,
         ),
         body: Stack(
@@ -124,7 +133,8 @@ class _HomeState extends State<Home> {
 
                 //when map drag stops
                 onCameraIdle: () async {
-                  List<Placemark> placemarks = await placemarkFromCoordinates(cameraPosition!.target.latitude, cameraPosition!.target.longitude);
+                  List<Placemark> placemarks = await placemarkFromCoordinates(
+                      cameraPosition!.target.latitude, cameraPosition!.target.longitude);
                   Placemark place = placemarks[0];
                   setState(() { //get place name from lat and lang
                     location = "${place.street}, ${place.subLocality}, "
@@ -136,14 +146,14 @@ class _HomeState extends State<Home> {
               //map marker here
               Center(
                 child: Transform.translate(
-                  offset: const Offset(0, -(pickerWidth/2)),
-                  child: Image.asset("assets/images/map_marker.png", width: pickerWidth,)
+                    offset: const Offset(0, -(pickerWidth/2)),
+                    child: Image.asset("assets/images/map_marker.png", width: pickerWidth,)
                 ),
               ),
 
               const SizedBox(height: 20,),
               Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 alignment: Alignment.topRight,
                 child: Column(
                   children: <Widget>[
@@ -173,17 +183,17 @@ class _HomeState extends State<Home> {
               Positioned(
                 bottom:100,
                 child: Padding(
-                  padding: EdgeInsets.all(15),
+                  padding: const EdgeInsets.all(15),
                   child: Card(
                     child: Container(
-                      padding: EdgeInsets.all(0),
+                      padding: const EdgeInsets.all(0),
                       width: MediaQuery.of(context).size.width - 40,
                       child: Obx(()=>
                         ListTile(
                           leading: isMapDragging.value
-                              ? CircularProgressIndicator()
+                              ? const CircularProgressIndicator()
                               : Image.asset("assets/images/map_marker.png", width: pickerWidth/1.5,),
-                          title:Text(location, style: TextStyle(fontSize: 18),),
+                          title:Text(location, style: const TextStyle(fontSize: 18),),
                           dense: true,
                         )
                       )
