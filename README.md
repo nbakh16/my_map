@@ -1,5 +1,5 @@
 # my_map
 
-google map api
+google maps api
 
 drag map to select location
